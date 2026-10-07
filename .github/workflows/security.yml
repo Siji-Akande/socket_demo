@@ -43,7 +43,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - run: pip install bandit==X.Y.Z
+      - run: pip install bandit==1.9.4
       - run: bandit -r . -x ./.venv
 
   secret-scan:
