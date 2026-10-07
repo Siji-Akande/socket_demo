@@ -1,0 +1,37 @@
+name: Security checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  socket-scan:
+    name: Socket dependency scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install -g socket
+      - run: socket ci
+        env:
+          SOCKET_CLI_API_TOKEN: ${{ secrets.SOCKET_CLI_API_TOKEN }}
+
+  build:
+    name: Install through Socket Firewall
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: SocketDev/action@v1
+        with:
+          mode: firewall
+      - run: sfw pip install -r requirements.txt
+      - run: python -c "import requests, pydantic; print('imports ok')"
